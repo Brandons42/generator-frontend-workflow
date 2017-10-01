@@ -11,6 +11,7 @@ module.exports = class extends Generator {
 
     this.props = {
       manager: 'Yarn',
+      data: 'JSON',
       template: 'Pug, formerly known as Jade',
       preprocessor: 'Sass',
       script: 'ECMAScript 6 (ES6)/ ECMAScript 2015 (ES2015)'
@@ -29,6 +30,24 @@ module.exports = class extends Generator {
         default: 'Yarn'
       }).then(props => {
         this.props.manager = props.manager;
+        this.prompting();
+      });
+
+    };
+
+    this.promptingData = function() {
+
+      return this.prompt({
+        type: 'list',
+        name: 'data',
+        message: 'When there\'s a choice, which data-exchange format do you prefer?',
+        choices: [
+          'JSON',
+          'YAML'
+        ],
+        default: 'JSON'
+      }).then(props => {
+        this.props.data = props.data;
         this.prompting();
       });
 
@@ -221,6 +240,7 @@ module.exports = class extends Generator {
       choices: [
         'I\'m ready to generate!',
         `I wouldn\'t like to use ${chalk.red(this.props.manager)} for dependency management`,
+        `I wouldn\'t like to use ${chalk.red(this.props.data)} as my preferred data-exchange format`,
         `I wouldn\'t like to use ${map[this.props.template][0]} template engine`,
         `I wouldn\'t like to use ${map[this.props.preprocessor][0]} pre-processor`,
         `I wouldn\'t like to use ${map[this.props.script][0]}`
@@ -229,6 +249,9 @@ module.exports = class extends Generator {
     }).then(props => {
       if (props.settings.endsWith('management')) {
         this.promptingManagers();
+      }
+      else if (props.settings.endsWith('format')) {
+        this.promptingData();
       }
       else if (props.settings.endsWith('engine')) {
         this.promptingTemplates();
