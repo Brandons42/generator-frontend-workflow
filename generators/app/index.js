@@ -13,7 +13,7 @@ module.exports = class extends Generator {
       manager: 'Yarn',
       template: 'Pug, formerly known as Jade',
       preprocessor: 'Sass',
-      js: 'ECMAScript 6 (ES6)/ ECMAScript 2015 (ES2015)'
+      script: 'ECMAScript 6 (ES6)/ ECMAScript 2015 (ES2015)'
     };
 
     this.promptingManagers = function() {
@@ -76,11 +76,11 @@ module.exports = class extends Generator {
 
     };
 
-    this.promptingJS = function() {
+    this.promptingScripts = function() {
 
       return this.prompt({
         type: 'list',
-        name: 'js',
+        name: 'script',
         message: 'Which version or alternative of Javascript do you prefer?',
         choices: [
           'CoffeeScript',
@@ -88,12 +88,15 @@ module.exports = class extends Generator {
           'ECMAScript 6 (ES6)/ ECMAScript 2015 (ES2015)',
           'ECMAScript 2016 (ES2016)',
           'ECMAScript 2017 (ES2017)',
-          'Opal, compiles Ruby to JS',
+          'Elm',
+          'LiveScript',
+          'oj',
+          'PureScript',
           'TypeScript'
         ],
         default: 'ECMAScript 6 (ES6)/ ECMAScript 2015 (ES2015)'
       }).then(props => {
-        this.props.js = props.js;
+        this.props.script = props.script;
         this.prompting();
       });
 
@@ -118,6 +121,8 @@ module.exports = class extends Generator {
 
     };*/
 
+
+
   }
 
   initializing() {
@@ -133,27 +138,80 @@ module.exports = class extends Generator {
     const done = this.async();
     const alt = ' as an alternative to Javascript';
     const v = ' as a version of Javascript';
-    const short = {
+    const map = {
       //Template engines
-      'EJS': chalk.red('EJS') + ' as a',
-      'Handlebars': chalk.red('Handlebars') + ' as a',
-      'Mustache': chalk.red('Mustache') + ' as a',
-      'Plain old HTML': chalk.red('no'),
-      'Pug, formerly known as Jade': chalk.red('Pug'),
+      'EJS': [
+        chalk.red('EJS') + ' as a',
+        'ejs'
+      ],
+      'Handlebars': [
+        chalk.red('Handlebars') + ' as a'
+      ],
+      'Mustache': [
+        chalk.red('Mustache') + ' as a'
+      ],
+      'Plain old HTML': [
+        chalk.red('no'),
+        'html'
+      ],
+      'Pug, formerly known as Jade': [
+        chalk.red('Pug'),
+        'pug'
+      ],
       //Pre-processors
-      'Less': chalk.red('Less') + ' as a',
-      'Plain old CSS': chalk.red('no'),
-      'Sass': chalk.red('Sass') + ' as a',
-      'SCSS, Sass with more CSS-like syntax': chalk.red('SCSS') + ' as a',
-      'Stylus': chalk.red('Stylus') + ' as a',
+      'Less': [
+        chalk.red('Less') + ' as a'
+      ],
+      'Plain old CSS': [
+        chalk.red('no'),
+        'css'
+      ],
+      'Sass': [
+        chalk.red('Sass') + ' as a',
+        'sass'
+      ],
+      'SCSS, Sass with more CSS-like syntax': [
+        chalk.red('SCSS') + ' as a',
+        'scss'
+      ],
+      'Stylus': [
+        chalk.red('Stylus') + ' as a'
+      ],
       //JS versions/alternatives
-      'CoffeeScript': chalk.red('CoffeeScript') + alt,
-      'ECMAScript 5 (ES5), what you probably know as vanilla JS': chalk.red('vanilla Javascript'),
-      'ECMAScript 6 (ES6)/ ECMAScript 2015 (ES2015)': chalk.red('ES2015') + v,
-      'ECMAScript 2016 (ES2016)': chalk.red('ES2016') + v,
-      'ECMAScript 2017 (ES2017)': chalk.red('ES2017') + v,
-      'Opal, compiles Ruby to JS': chalk.red('Opal') + alt,
-      'TypeScript': chalk.red('TypeScript') + alt
+      'CoffeeScript': [
+        chalk.red('CoffeeScript') + alt
+      ],
+      'ECMAScript 5 (ES5), what you probably know as vanilla JS': [
+        chalk.red('vanilla Javascript'),
+        'js'
+      ],
+      'ECMAScript 6 (ES6)/ ECMAScript 2015 (ES2015)': [
+        chalk.red('ES2015') + v,
+        'js'
+      ],
+      'ECMAScript 2016 (ES2016)': [
+        chalk.red('ES2016') + v,
+        'js'
+      ],
+      'ECMAScript 2017 (ES2017)': [
+        chalk.red('ES2017') + v,
+        'js'
+      ],
+      'Elm': [
+        chalk.red('Elm') + alt
+      ],
+      'LiveScript': [
+        chalk.red('LiveScript') + alt
+      ],
+      'oj': [
+        chalk.red('oj') + alt
+      ],
+      'PureScript': [
+        chalk.red('PureScript') + alt
+      ],
+      'TypeScript': [
+        chalk.red('TypeScript') + alt
+      ]
     }
 
     return this.prompt({
@@ -163,9 +221,9 @@ module.exports = class extends Generator {
       choices: [
         'I\'m ready to generate!',
         `I wouldn\'t like to use ${chalk.red(this.props.manager)} for dependency management`,
-        `I wouldn\'t like to use ${short[this.props.template]} template engine`,
-        `I wouldn\'t like to use ${short[this.props.preprocessor]} pre-processor`,
-        `I wouldn\'t like to use ${short[this.props.js]}`
+        `I wouldn\'t like to use ${map[this.props.template][0]} template engine`,
+        `I wouldn\'t like to use ${map[this.props.preprocessor][0]} pre-processor`,
+        `I wouldn\'t like to use ${map[this.props.script][0]}`
       ],
       default: 'I\'m ready to generate!'
     }).then(props => {
@@ -179,7 +237,7 @@ module.exports = class extends Generator {
         this.promptingPreprocessors();
       }
       else if (props.settings.endsWith('Javascript')) {
-        this.promptingJS();
+        this.promptingScripts();
       }
       else {
         done();
