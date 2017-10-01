@@ -178,25 +178,25 @@ module.exports = class extends Generator {
     const v = ' as a version of Javascript';
     const short = {
       //Template engines
-      'EJS': 'EJS as a',
-      'Handlebars': 'Handlebars as a',
-      'Mustache': 'Mustache as a',
-      'Plain old HTML': 'no',
-      'Pug, formerly known as Jade': 'Pug',
+      'EJS': chalk.red('EJS') + ' as a',
+      'Handlebars': chalk.red('Handlebars') + ' as a',
+      'Mustache': chalk.red('Mustache') + ' as a',
+      'Plain old HTML': chalk.red('no'),
+      'Pug, formerly known as Jade': chalk.red('Pug'),
       //Pre-processors
-      'Less': 'Less as a',
-      'Plain old CSS': 'no',
-      'Sass': 'Sass as a',
-      'SCSS, Sass with more CSS-like syntax': 'SCSS as a',
-      'Stylus': 'Stylus as a',
+      'Less': chalk.red('Less') + ' as a',
+      'Plain old CSS': chalk.red('no'),
+      'Sass': chalk.red('Sass') + ' as a',
+      'SCSS, Sass with more CSS-like syntax': chalk.red('SCSS') + ' as a',
+      'Stylus': chalk.red('Stylus') + ' as a',
       //JS versions/alternatives
-      'CoffeeScript': 'CoffeeScript' + alt,
-      'ECMAScript 5 (ES5), what you probably know as vanilla JS': 'vanilla Javascript',
-      'ECMAScript 6 (ES6)/ ECMAScript 2015 (ES2015)': 'ES2015' + v,
-      'ECMAScript 2016 (ES2016)': 'ES2016' + v,
-      'ECMAScript 2017 (ES2017)': 'ES2017' + v,
-      'Opal, compiles Ruby to JS': 'Opal' + alt,
-      'TypeScript': 'TypeScript' + alt
+      'CoffeeScript': chalk.red('CoffeeScript') + alt,
+      'ECMAScript 5 (ES5), what you probably know as vanilla JS': chalk.red('vanilla Javascript'),
+      'ECMAScript 6 (ES6)/ ECMAScript 2015 (ES2015)': chalk.red('ES2015') + v,
+      'ECMAScript 2016 (ES2016)': chalk.red('ES2016') + v,
+      'ECMAScript 2017 (ES2017)': chalk.red('ES2017') + v,
+      'Opal, compiles Ruby to JS': chalk.red('Opal') + alt,
+      'TypeScript': chalk.red('TypeScript') + alt
     }
 
     return this.prompt({
