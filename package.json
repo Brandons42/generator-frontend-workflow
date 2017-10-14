@@ -2,11 +2,12 @@
   "name": "generator-simple-frontend",
   "version": "0.0.0",
   "description": "A flexible Yeoman generator that can generate the front end set up just right for you",
+  "license": "MIT",
   "homepage": "https://github.com/Brandons42/generator-simple-frontend",
   "author": {
     "name": "Brandon Suen",
     "email": "brandonsuenbusiness@gmail.com",
-    "url": "https://brandons42.github.io/personal_website/"
+    "url": "https://github.com/Brandons42"
   },
   "files": [
     "generators"
@@ -27,17 +28,17 @@
     "yeoman-generator"
   ],
   "devDependencies": {
-    "yeoman-test": "^1.6.0",
-    "yeoman-assert": "^3.0.0",
-    "nsp": "^2.6.3",
     "eslint": "^4.1.0",
     "eslint-config-xo-space": "^0.16.0",
     "jest": "^19.0.2",
-    "jest-cli": "^20.0.0"
+    "jest-cli": "^20.0.0",
+    "nsp": "^2.6.3",
+    "yeoman-assert": "^3.0.0",
+    "yeoman-test": "^1.6.0"
   },
   "dependencies": {
-    "yeoman-generator": "^1.0.0",
     "chalk": "^1.1.3",
+    "yeoman-generator": "^2.0.1",
     "yosay": "^2.0.0"
   },
   "jest": {
@@ -55,6 +56,5 @@
       "node": true
     }
   },
-  "repository": "https://github.com/Brandons42/generator-simple-frontend.git",
-  "private": true
+  "repository": "https://github.com/Brandons42/generator-simple-frontend.git"
 }

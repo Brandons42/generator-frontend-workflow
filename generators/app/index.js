@@ -10,26 +10,126 @@ module.exports = class extends Generator {
     super(args, opts);
 
     this.props = {
-      manager: 'Yarn',
+      dep: 'Yarn',
       data: 'JSON',
-      template: 'Pug, formerly known as Jade',
-      preprocessor: 'Sass',
+      fw: 'React',
+      pp: 'Sass',
       script: 'ECMAScript 6 (ES6)/ ECMAScript 2015 (ES2015)'
     };
 
-    this.promptingManagers = function() {
+    const alt = ' as an alternative to Javascript';
+    const ldr = '-loader\'';
+    const rct = chalk.red('React');
+    const suf = ' as my';
+    const v = ' as a version of Javascript';
+    const w = rct + ' with ';
+    this.map = {
+      //JS Frameworks
+      'Angular': {
+        dep: [],
+        short: chalk.red('Angular') + suf
+      },
+      'Ember': {
+        short: chalk.red('Ember') + suf
+      },
+      'None': {
+        short: chalk.red('no')
+      },
+      'React': {
+        short: 'vanilla ' + rct
+      },
+      'React with Flux': {
+        short: w + chalk.red('Flux')
+      },
+      'React with Mobx': {
+        short: w + chalk.red('Mobx')
+      },
+      'React with Redux': {
+        short: w + chalk.red('Redux')
+      },
+      //Pre-processors
+      'Less': {
+        ext: 'less',
+        loader: ', \'less' + ldr,
+        short: chalk.red('Less') + suf
+      },
+      'Plain old CSS': {
+        ext: 'css',
+        loader: '',
+        short: chalk.red('no')
+      },
+      'Sass': {
+        ext: 'sass',
+        loader: ', \'sass' + ldr,
+        short: chalk.red('Sass') + suf
+      },
+      'SCSS, Sass with more CSS-like syntax': {
+        ext: 'scss',
+        loader: ', \'sass' + ldr,
+        short: chalk.red('SCSS') + suf
+      },
+      'Stylus': {
+        ext: 'styl',
+        loader: ', \'stylus' + ldr,
+        short: chalk.red('Stylus') + suf
+      },
+      //JS versions/alternatives
+      'CoffeeScript': {
+        ext: 'coffee',
+        short: chalk.red('CoffeeScript') + alt
+      },
+      'ECMAScript 5 (ES5), what you probably know as vanilla JS': {
+        ext: 'js',
+        loader: '',
+        short: chalk.red('vanilla Javascript')
+      },
+      'ECMAScript 6 (ES6)/ ECMAScript 2015 (ES2015)': {
+        ext: 'js',
+        short: chalk.red('ES2015') + v
+      },
+      'ECMAScript 2016 (ES2016)': {
+        ext: 'js',
+        short: chalk.red('ES2016') + v
+      },
+      'ECMAScript 2017 (ES2017)': {
+        ext: 'js',
+        short: chalk.red('ES2017') + v
+      },
+      'Elm': {
+        ext: 'elm',
+        short: chalk.red('Elm') + alt
+      },
+      'LiveScript': {
+        ext: 'ls',
+        short: chalk.red('LiveScript') + alt
+      },
+      'oj': {
+        ext: 'oj',
+        short: chalk.red('oj') + alt
+      },
+      'PureScript': {
+        ext: 'purs',
+        short: chalk.red('PureScript') + alt
+      },
+      'TypeScript': {
+        ext: 'ts',
+        short: chalk.red('TypeScript') + alt
+      }
+    };
+
+    this.promptingDeps = function() {
 
       return this.prompt({
-        type: 'list',
-        name: 'manager',
-        message: 'Which option would you like to use for dependency management?',
         choices: [
           'NPM',
           'Yarn'
         ],
-        default: 'Yarn'
+        default: 'Yarn',
+        message: 'Which option would you like to use for dependency management?',
+        name: 'dep',
+        type: 'list'
       }).then(props => {
-        this.props.manager = props.manager;
+        this.props.dep = props.dep;
         this.prompting();
       });
 
@@ -38,14 +138,14 @@ module.exports = class extends Generator {
     this.promptingData = function() {
 
       return this.prompt({
-        type: 'list',
-        name: 'data',
-        message: 'When there\'s a choice, which data-exchange format do you prefer?',
         choices: [
           'JSON',
           'YAML'
         ],
-        default: 'JSON'
+        default: 'JSON',
+        message: 'When there\'s a choice, which data-exchange format do you prefer?',
+        name: 'data',
+        type: 'list'
       }).then(props => {
         this.props.data = props.data;
         this.prompting();
@@ -53,33 +153,33 @@ module.exports = class extends Generator {
 
     };
 
-    this.promptingTemplates = function(){
+    this.promptingFws = function(){
 
       return this.prompt({
-        type: 'list',
-        name: 'template',
-        message: 'Which template engine, if any, would you like to use for HTML?',
         choices: [
-          'EJS',
-          'Handlebars',
-          'Mustache',
-          'Plain old HTML',
-          'Pug, formerly known as Jade'
+          'Angular',
+          'Ember',
+          'None',
+          'React',
+          'React with Flux',
+          'React with Mobx',
+          'React with Redux',
+          'Vue'
         ],
-        default: 'Pug, formerly known as Jade'
+        default: 'React',
+        message: 'Which Javascript framework, if any, would you like to use for HTML?',
+        name: 'fw',
+        type: 'list'
       }).then(props => {
-        this.props.template = props.template;
+        this.props.fw = props.fw;
         this.prompting();
       });
 
     };
 
-    this.promptingPreprocessors = function() {
+    this.promptingPps = function() {
 
       return this.prompt({
-        type: 'list',
-        name: 'preprocessor',
-        message: 'Which CSS pre-processor, if any, would you like to use?',
         choices: [
           'Less',
           'Plain old CSS',
@@ -87,9 +187,12 @@ module.exports = class extends Generator {
           'SCSS, Sass with more CSS-like syntax',
           'Stylus'
         ],
-        default: 'Sass'
+        default: 'Sass',
+        message: 'Which CSS pre-processor, if any, would you like to use?',
+        name: 'pp',
+        type: 'list'
       }).then(props => {
-        this.props.preprocessor = props.preprocessor;
+        this.props.pp = props.pp;
         this.prompting();
       });
 
@@ -98,9 +201,6 @@ module.exports = class extends Generator {
     this.promptingScripts = function() {
 
       return this.prompt({
-        type: 'list',
-        name: 'script',
-        message: 'Which version or alternative of Javascript do you prefer?',
         choices: [
           'CoffeeScript',
           'ECMAScript 5 (ES5), what you probably know as vanilla JS',
@@ -113,7 +213,10 @@ module.exports = class extends Generator {
           'PureScript',
           'TypeScript'
         ],
-        default: 'ECMAScript 6 (ES6)/ ECMAScript 2015 (ES2015)'
+        default: 'ECMAScript 6 (ES6)/ ECMAScript 2015 (ES2015)',
+        message: 'Which version or alternative of Javascript do you prefer?',
+        name: 'script',
+        type: 'list'
       }).then(props => {
         this.props.script = props.script;
         this.prompting();
@@ -124,16 +227,16 @@ module.exports = class extends Generator {
     /*this.promptingJSLib = function() {
 
       return this.prompt({
-        type: 'checkbox',
-        name: 'jslib',
-        message: 'Which Javascript libraries, if any, would you like to use?',
         choices: [
           'D3',
           'jQuery',
           'Lodash',
           'Underscore'
         ],
-        default:
+        default:,
+        message: 'Which Javascript libraries, if any, would you like to use?',
+        name: 'jslib',
+        type: 'checkbox'
       }).then(props => {
         this.props.jslib
       });
@@ -155,109 +258,33 @@ module.exports = class extends Generator {
   prompting() {
 
     const done = this.async();
-    const alt = ' as an alternative to Javascript';
-    const v = ' as a version of Javascript';
-    const map = {
-      //Template engines
-      'EJS': [
-        chalk.red('EJS') + ' as a',
-        'ejs'
-      ],
-      'Handlebars': [
-        chalk.red('Handlebars') + ' as a'
-      ],
-      'Mustache': [
-        chalk.red('Mustache') + ' as a'
-      ],
-      'Plain old HTML': [
-        chalk.red('no'),
-        'html'
-      ],
-      'Pug, formerly known as Jade': [
-        chalk.red('Pug'),
-        'pug'
-      ],
-      //Pre-processors
-      'Less': [
-        chalk.red('Less') + ' as a'
-      ],
-      'Plain old CSS': [
-        chalk.red('no'),
-        'css'
-      ],
-      'Sass': [
-        chalk.red('Sass') + ' as a',
-        'sass'
-      ],
-      'SCSS, Sass with more CSS-like syntax': [
-        chalk.red('SCSS') + ' as a',
-        'scss'
-      ],
-      'Stylus': [
-        chalk.red('Stylus') + ' as a'
-      ],
-      //JS versions/alternatives
-      'CoffeeScript': [
-        chalk.red('CoffeeScript') + alt
-      ],
-      'ECMAScript 5 (ES5), what you probably know as vanilla JS': [
-        chalk.red('vanilla Javascript'),
-        'js'
-      ],
-      'ECMAScript 6 (ES6)/ ECMAScript 2015 (ES2015)': [
-        chalk.red('ES2015') + v,
-        'js'
-      ],
-      'ECMAScript 2016 (ES2016)': [
-        chalk.red('ES2016') + v,
-        'js'
-      ],
-      'ECMAScript 2017 (ES2017)': [
-        chalk.red('ES2017') + v,
-        'js'
-      ],
-      'Elm': [
-        chalk.red('Elm') + alt
-      ],
-      'LiveScript': [
-        chalk.red('LiveScript') + alt
-      ],
-      'oj': [
-        chalk.red('oj') + alt
-      ],
-      'PureScript': [
-        chalk.red('PureScript') + alt
-      ],
-      'TypeScript': [
-        chalk.red('TypeScript') + alt
-      ]
-    }
 
+    const str = 'I wouldn\'t like to use ';
     return this.prompt({
       type: 'list',
       name: 'settings',
       message: 'Are you alright with your current settings? Select what applies to you.',
       choices: [
         'I\'m ready to generate!',
-        `I wouldn\'t like to use ${chalk.red(this.props.manager)} for dependency management`,
-        `I wouldn\'t like to use ${chalk.red(this.props.data)} as my preferred data-exchange format`,
-        `I wouldn\'t like to use ${map[this.props.template][0]} template engine`,
-        `I wouldn\'t like to use ${map[this.props.preprocessor][0]} pre-processor`,
-        `I wouldn\'t like to use ${map[this.props.script][0]}`
+        str + chalk.red(this.props.dep) + ' for dependency management',
+        str + chalk.red(this.props.data) + ' as my preferred data-exchange format',
+        str + this.map[this.props.fw].short + ' as my Javascript framework',
+        str + this.map[this.props.pp].short + ' pre-processor',
+        str + this.map[this.props.script].short
       ],
       default: 'I\'m ready to generate!'
     }).then(props => {
       if (props.settings.endsWith('management')) {
-        this.promptingManagers();
+        this.promptingDeps();
       }
       else if (props.settings.endsWith('format')) {
         this.promptingData();
       }
-      else if (props.settings.endsWith('engine')) {
-        this.promptingTemplates();
+      else if (props.settings.endsWith('framework')) {
+        this.promptingFws();
       }
       else if (props.settings.endsWith('pre-processor')) {
-        this.promptingPreprocessors();
+        this.promptingPps();
       }
       else if (props.settings.endsWith('Javascript')) {
         this.promptingScripts();
@@ -271,16 +298,20 @@ module.exports = class extends Generator {
 
   writing() {
 
-    this.fs.copy(
-      this.templatePath('dummyfile.txt'),
-      this.destinationPath('dummyfile.txt')
+    this.fs.copyTpl(
+      this.templatePath('webpack.config.js'),
+      this.destinationPath('webpack.config.js'), {
+        ppExt: this.map[this.props.pp].ext,
+        ppLoader: this.map[this.props.pp].loader,
+        scriptExt: this.map[this.props.script].ext
+      }
     );
 
   }
 
   install() {
 
-    this.installDependencies();
+    //this.installDependencies();
 
   }
 

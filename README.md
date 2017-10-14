@@ -1,5 +1,5 @@
 # generator-simple-frontend [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
-> A flexible Yeoman generator that can generate the front end set up just right for you with no JS framework
+> A flexible Yeoman generator that can generate the front end set up just right for you
 
 ## Installation
 
@@ -25,9 +25,9 @@ yo simple-frontend
 
 ## License
 
- © [Brandon Suen](https://brandons42.github.io/personal_website/)
+ © Brandon Suen
 
-
+[Brandon Suen]: https://brandons42.github.io/personal_website/
 [npm-image]: https://badge.fury.io/js/generator-simple-frontend.svg
 [npm-url]: https://npmjs.org/package/generator-simple-frontend
 [travis-image]: https://travis-ci.org/brandons42/generator-simple-frontend.svg?branch=master
