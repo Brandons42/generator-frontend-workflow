@@ -103,6 +103,7 @@ module.exports = class extends Generator {
     this.config.defaults({
       'dep': 'Yarn',
       'data': 'JSON',
+      'enrty': 'scripts/index.js',
       'pp': 'Sass',
       'pst': false,
       'psts': {
@@ -418,14 +419,24 @@ module.exports = class extends Generator {
       choices[q] += `: ${ps[choices[q]].data}, ${ps[choices[q]].dep}, ${this.map[ps[choices[q]].pp].abrv}, ${this.map[ps[choices[q]].script].abrv}`;
     }
     choices.unshift(new Separator(), no, del, new Separator());
-    return this.prompt({
-      choices: choices,
-      message: 'Would you like to use a preset? If so, which one? Alternatively, would you like to delete one?',
-      name: 'preset',
-      type: 'list',
-      when: !this.done
-    }).then(props => {
+    return this.prompt([
+      {
+        choices: choices,
+        message: 'Would you like to use a preset? If so, which one? Alternatively, would you like to delete one?',
+        name: 'preset',
+        type: 'list',
+        when: !this.done
+      },
+      {
+        default: this.config.get('entry'),
+        message: 'What will be the path(s) to your entry file(s) for Webpack? (Separate paths with a comma)',
+        name: 'entry',
+        type: 'input',
+        when: this.done
+      }
+    ]).then(props => {
       if (this.done) {
+        this.config.set({'entry': props.entry});
         done();
       }
       else if (props.preset == no) {
@@ -448,6 +459,7 @@ module.exports = class extends Generator {
       this.fs.copyTpl(
         this.templatePath('webpack.config.js'),
         this.destinationPath('webpack.config.js'), {
+          entry: this.config.get('entry').replace(/ /g, ''),
           ppExt: this.map[pp].ext,
           ppLoader: this.map[pp].loader,
           scriptExt: this.map[this.config.get('script')].ext

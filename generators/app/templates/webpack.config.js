@@ -5,9 +5,18 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
   entry: {
-    index: [
-      path.resolve(__dirname, 'scripts/styles.<%= scriptExt %>')
-    ]
+    index: <%
+      const array = entry.split(',');
+      if (array.length == 1) {
+        %>path.resolve(__dirname, <%- '\'' + array + '\'' %>)<%
+      }
+      else {
+        %>[
+        path.resolve(__dirname, <%- '\'' + array[0] + '\'' %>)<%
+        for (let q = 1; q < array.length; q++) { %>,
+        path.resolve(__dirname, <%- '\'' + array[q] + '\'' %>)<%
+      }%>
+    ]<% } %>
   },
   module: {
     rules: [
