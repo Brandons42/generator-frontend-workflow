@@ -53,7 +53,7 @@ module.exports = class extends Generator {
         short: chalk.red('CoffeeScript') + alt
       },
       'ECMAScript 5 (ES5), what you probably know as vanilla JS': {
-        abrv: 'Vanilla JavaScript',
+        abrv: 'Vanilla Javascript',
         ext: 'js',
         loader: '',
         short: chalk.red('vanilla Javascript')
@@ -123,11 +123,13 @@ module.exports = class extends Generator {
     });
 
     this.done = false;
+    this.skip = false;
 
     this.promptingData = function() {
 
       return this.prompt({
         choices: [
+          new Separator(),
           'JSON',
           'YAML'
         ],
@@ -145,17 +147,23 @@ module.exports = class extends Generator {
     this.promptingDel = function() {
 
       const p = this.config.get('psts');
-      this.prsts = Object.keys(p);
-      this.prsts.sort();
+      const prsts = Object.keys(p);
+      prsts.sort();
+      for (let q = 0; q < prsts.length; q++) {
+        prsts[q] += `: ${p[prsts[q]].data}, ${p[prsts[q]].dep}, ${this.map[p[prsts[q]].pp].abrv}, ${this.map[p[prsts[q]].script].abrv}`;
+      }
+      prsts.unshift(new Separator());
       return this.prompt({
-        choices: this.prsts,
+        choices: prsts,
         default: 0,
         message: 'Which preset would you like to delete?',
         name: 'del',
         type: 'list'
       }).then(props => {
-        delete p[props.del];
+        delete p[(props.del).slice(0, (props.del).lastIndexOf(':'))];
         this.config.set({'psts': p});
+        this.done = true;
+        this.skip = true;
         this.prompting();
       });
 
@@ -165,6 +173,7 @@ module.exports = class extends Generator {
 
       return this.prompt({
         choices: [
+          new Separator(),
           'NPM',
           'Yarn'
         ],
@@ -184,6 +193,7 @@ module.exports = class extends Generator {
       const str = 'I wouldn\'t like to use ';
       return this.prompt({
         choices: [
+          new Separator(),
           'I\'m ready to generate!',
           new Separator(),
           str + chalk.red(this.config.get('dep')) + ' for dependency management',
@@ -205,7 +215,7 @@ module.exports = class extends Generator {
         else if (props.settings.endsWith('pre-processor')) {
           this.promptingPps();
         }
-        else if (props.settings.endsWith('Javascript')) {
+        else if (!props.settings.endsWith('generate!')) {
           this.promptingScripts();
         }
         else {
@@ -245,6 +255,7 @@ module.exports = class extends Generator {
 
       return this.prompt({
         choices: [
+          new Separator(),
           'Less',
           'Plain old CSS',
           'Sass',
@@ -272,7 +283,20 @@ module.exports = class extends Generator {
       }).then(props => {
         this.config.set({'pst': props.pst});
         if (props.pst) {
-          this.promptingPsts();
+          let stop = false;
+          const presets = this.config.get('psts');
+          for (let key in presets) {
+            if (presets[key].dep == this.config.get('dep') && presets[key].data == this.config.get('data') && presets[key].pp == this.config.get('pp') && presets[key].script == this.config.get('script')) {
+              stop = key;
+              break;
+            }
+          }
+          if (!stop) {
+            this.promptingPsts();
+          }
+          else {
+            this.promptingRN(stop, presets);
+          }
         }
         else {
           this.done = true;
@@ -309,47 +333,37 @@ module.exports = class extends Generator {
           this.promptingOW(props.psts, psts);
         }
         else {
-          let proceed = false;
-          for (let key in psts) {
-            if (psts[key].dep == this.config.get('dep') && psts[key].data == this.config.get('data') && psts[key].pp == this.config.get('pp') && psts[key].script == this.config.get('script')) {
-              proceed = key;
-              break;
-            }
-          }
-          if (!proceed) {
-            psts[props.psts] = {
-              dep: this.config.get('dep'),
-              data: this.config.get('data'),
-              pp: this.config.get('pp'),
-              script: this.config.get('script')
-            };
-            this.config.set({'psts': psts});
-            this.done = true;
-            this.prompting();
-          }
-          else {
-            this.promptingRN(props.psts, proceed, psts);
-          }
+          psts[props.psts] = {
+            dep: this.config.get('dep'),
+            data: this.config.get('data'),
+            pp: this.config.get('pp'),
+            script: this.config.get('script')
+          };
+          this.config.set({'psts': psts});
+          this.done = true;
+          this.prompting();
         }
       });
 
     };
 
-    this.promptingRN = function(newNm, oldNm, psts) {
+    this.promptingRN = function(name, psts) {
 
       return this.prompt({
         default: false,
-        message: 'Another preset, "' + oldNm + '," already has the same settings. Would you like to rename it?',
+        message: 'Another preset named "' + name + '" already has the same settings. Would you like to rename it?',
         name: 'rn',
         type: 'confirm'
       }).then(props => {
         if (props.rn) {
-          psts[newNm] = psts[oldNm];
-          delete psts[oldNm];
+          delete psts[name];
+          this.config.set({'psts': psts});
+          this.promptingPsts();
         }
-        this.config.set({'psts': psts});
-        this.done = true;
-        this.prompting();
+        else {
+          this.done = true;
+          this.prompting();
+        }
       });
 
     };
@@ -358,6 +372,7 @@ module.exports = class extends Generator {
 
       return this.prompt({
         choices: [
+          new Separator(),
           'CoffeeScript',
           'ECMAScript 5 (ES5), what you probably know as vanilla JS',
           'ECMAScript 6 (ES6)/ ECMAScript 2015 (ES2015)',
@@ -396,12 +411,16 @@ module.exports = class extends Generator {
 
     const del = "I'd like to delete a preset";
     const no = 'No thanks, I\'d like to customize my project';
-    const choices = Object.keys(this.config.get('psts'));
+    const ps = this.config.get('psts');
+    const choices = Object.keys(ps);
     choices.sort();
-    choices.unshift(no, del, new Separator());
+    for (let q = 0; q < choices.length; q++) {
+      choices[q] += `: ${ps[choices[q]].data}, ${ps[choices[q]].dep}, ${this.map[ps[choices[q]].pp].abrv}, ${this.map[ps[choices[q]].script].abrv}`;
+    }
+    choices.unshift(new Separator(), no, del, new Separator());
     return this.prompt({
       choices: choices,
-      message: 'Would you like to use a preset? If so, which one? Would you like to delete one?',
+      message: 'Would you like to use a preset? If so, which one? Alternatively, would you like to delete one?',
       name: 'preset',
       type: 'list',
       when: !this.done
@@ -424,15 +443,17 @@ module.exports = class extends Generator {
 
   writing() {
 
-    const pp = this.config.get('pp');
-    this.fs.copyTpl(
-      this.templatePath('webpack.config.js'),
-      this.destinationPath('webpack.config.js'), {
-        ppExt: this.map[pp].ext,
-        ppLoader: this.map[pp].loader,
-        scriptExt: this.map[this.config.get('script')].ext
-      }
-    );
+    if (!this.skip) {
+      const pp = this.config.get('pp');
+      this.fs.copyTpl(
+        this.templatePath('webpack.config.js'),
+        this.destinationPath('webpack.config.js'), {
+          ppExt: this.map[pp].ext,
+          ppLoader: this.map[pp].loader,
+          scriptExt: this.map[this.config.get('script')].ext
+        }
+      );
+    }
 
   }
 
