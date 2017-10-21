@@ -1,6 +1,7 @@
 'use strict';
 const Generator = require('yeoman-generator');
 const chalk = require('chalk');
+const Separator = require('inquirer/lib/objects/separator.js');
 const yosay = require('yosay');
 
 module.exports = class extends Generator {
@@ -141,6 +142,25 @@ module.exports = class extends Generator {
 
     };
 
+    this.promptingDel = function() {
+
+      const p = this.config.get('psts');
+      this.prsts = Object.keys(p);
+      this.prsts.sort();
+      return this.prompt({
+        choices: this.prsts,
+        default: 0,
+        message: 'Which preset would you like to delete?',
+        name: 'del',
+        type: 'list'
+      }).then(props => {
+        delete p[props.del];
+        this.config.set({'psts': p});
+        this.prompting();
+      });
+
+    };
+
     this.promptingDeps = function() {
 
       return this.prompt({
@@ -165,6 +185,7 @@ module.exports = class extends Generator {
       return this.prompt({
         choices: [
           'I\'m ready to generate!',
+          new Separator(),
           str + chalk.red(this.config.get('dep')) + ' for dependency management',
           str + chalk.red(this.config.get('data')) + ' as my preferred data-exchange format',
           str + this.map[this.config.get('pp')].short + ' pre-processor',
@@ -373,12 +394,14 @@ module.exports = class extends Generator {
 
     const done = this.async();
 
+    const del = "I'd like to delete a preset";
     const no = 'No thanks, I\'d like to customize my project';
     const choices = Object.keys(this.config.get('psts'));
-    choices.unshift(no);
+    choices.sort();
+    choices.unshift(no, del, new Separator());
     return this.prompt({
       choices: choices,
-      message: 'Would you like to use a preset? If so, which one?',
+      message: 'Would you like to use a preset? If so, which one? Would you like to delete one?',
       name: 'preset',
       type: 'list',
       when: !this.done
@@ -388,6 +411,9 @@ module.exports = class extends Generator {
       }
       else if (props.preset == no) {
         this.promptingOpts();
+      }
+      else if (props.preset == del) {
+        this.promptingDel();
       }
       else {
 
