@@ -309,14 +309,14 @@ module.exports = class extends Generator {
           this.promptingOW(props.psts, psts);
         }
         else {
-          let proceed = true;
+          let proceed = false;
           for (let key in psts) {
             if (psts[key].dep == this.config.get('dep') && psts[key].data == this.config.get('data') && psts[key].pp == this.config.get('pp') && psts[key].script == this.config.get('script')) {
               proceed = key;
               break;
             }
           }
-          if (proceed) {
+          if (!proceed) {
             psts[props.psts] = {
               dep: this.config.get('dep'),
               data: this.config.get('data'),
