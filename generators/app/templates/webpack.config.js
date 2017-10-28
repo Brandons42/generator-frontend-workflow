@@ -12,9 +12,9 @@ module.exports = {
       }
       else {
         %>[
-        path.resolve(__dirname, <%- '\'' + array[0] + '\'' %>)<%
+      path.resolve(__dirname, <%- '\'' + array[0] + '\'' %>)<%
         for (let q = 1; q < array.length; q++) { %>,
-        path.resolve(__dirname, <%- '\'' + array[q] + '\'' %>)<%
+      path.resolve(__dirname, <%- '\'' + array[q] + '\'' %>)<%
       }%>
     ]<% } %>
   },

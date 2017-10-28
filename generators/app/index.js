@@ -18,12 +18,14 @@ module.exports = class extends Generator {
       //Pre-processors
       'Less': {
         abrv: 'Less',
+        dep: ['less' + ldr],
         ext: 'less',
         loader: ', \'less' + ldr,
         short: chalk.red('Less') + suf
       },
       'Plain old CSS': {
         abrv: 'CSS',
+        //dep:
         ext: 'css',
         loader: '',
         short: chalk.red('no')
@@ -103,7 +105,7 @@ module.exports = class extends Generator {
     this.config.defaults({
       'dep': 'Yarn',
       'data': 'JSON',
-      'enrty': 'scripts/index.js',
+      'entry': 'scripts/index.js',
       'pp': 'Sass',
       'pst': false,
       'psts': {
@@ -446,7 +448,16 @@ module.exports = class extends Generator {
         this.promptingDel();
       }
       else {
-
+        const index = props.preset.indexOf(':');
+        const selected = this.config.get('psts')[props.preset.slice(0, index)];
+        this.config.set({
+          'dep': selected.dep,
+          'data': selected.json,
+          'pp': selected.pp,
+          'script': selected.script
+        });
+        this.done = true;
+        this.prompting();
       }
     });
 
