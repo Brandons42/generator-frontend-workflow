@@ -1,9 +1,9 @@
 {
-  "name": "generator-simple-frontend",
+  "name": "generator-frontend-workflow",
   "version": "0.0.0",
-  "description": "A flexible Yeoman generator that can generate the front end set up just right for you",
+  "description": "A flexible Yeoman generator that can generate the front-end set up just right for you",
   "license": "MIT",
-  "homepage": "https://github.com/Brandons42/generator-simple-frontend",
+  "homepage": "https://github.com/Brandons42/generator-frontend-workflow",
   "author": {
     "name": "Brandon Suen",
     "email": "brandonsuenbusiness@gmail.com",
@@ -17,13 +17,27 @@
     "front",
     "end",
     "frontend",
+    "front-end"
     "html",
     "css",
     "sass",
     "scss",
+    "less",
+    "stylus",
+    "babel",
+    "es2015",
+    "es6",
+    "es2016",
+    "oj",
+    "livescript",
+    "purescript",
+    "typescript",
+    "coffeescript",
     "gulp",
     "webpack",
     "js",
+    "yeoman",
+    "generator",
     "yeoman-generator"
   ],
   "devDependencies": {
@@ -56,5 +70,5 @@
       "node": true
     }
   },
-  "repository": "https://github.com/Brandons42/generator-simple-frontend.git"
+  "repository": "https://github.com/Brandons42/generator-frontend-workflow.git"
 }

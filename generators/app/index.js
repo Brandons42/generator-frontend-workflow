@@ -403,7 +403,7 @@ module.exports = class extends Generator {
   initializing() {
 
     this.log(yosay(
-      'Welcome to the funkadelic ' + chalk.red('Simple Frontend') + ' Yeoman generator!'
+      'Welcome to the funkadelic ' + chalk.red('Front-end Workflow') + ' Yeoman generator!'
     ));
 
   }

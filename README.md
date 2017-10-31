@@ -1,13 +1,13 @@
-# generator-simple-frontend [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
-> A flexible Yeoman generator that can generate the front end set up just right for you
+# generator-frontend-workflow [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
+> A flexible Yeoman generator that can generate the front-end set up just right for you
 
 ## Installation
 
-First, install [Yeoman](http://yeoman.io) and generator-simple-frontend using [npm](https://www.npmjs.com/) (we assume you have pre-installed [node.js](https://nodejs.org/)).
+First, install [Yeoman](http://yeoman.io) and generator-frontend-workflow using [npm](https://www.npmjs.com/) (we assume you have pre-installed [node.js](https://nodejs.org/)).
 
 ```bash
 npm install -g yo
-npm install -g generator-simple-frontend
+npm install -g generator-frontend-workflow
 ```
 
 Then generate your new project:
@@ -28,9 +28,9 @@ yo simple-frontend
  © Brandon Suen
 
 [Brandon Suen]: https://brandons42.github.io/personal_website/
-[npm-image]: https://badge.fury.io/js/generator-simple-frontend.svg
-[npm-url]: https://npmjs.org/package/generator-simple-frontend
-[travis-image]: https://travis-ci.org/brandons42/generator-simple-frontend.svg?branch=master
-[travis-url]: https://travis-ci.org/brandons42/generator-simple-frontend
-[daviddm-image]: https://david-dm.org/brandons42/generator-simple-frontend.svg?theme=shields.io
-[daviddm-url]: https://david-dm.org/brandons42/generator-simple-frontend
+[npm-image]: https://badge.fury.io/js/generator-frontend-workflow.svg
+[npm-url]: https://npmjs.org/package/generator-frontend-workflow
+[travis-image]: https://travis-ci.org/brandons42/generator-frontend-workflow.svg?branch=master
+[travis-url]: https://travis-ci.org/brandons42/generator-frontend-workflow
+[daviddm-image]: https://david-dm.org/brandons42/generator-frontend-workflow.svg?theme=shields.io
+[daviddm-url]: https://david-dm.org/brandons42/generator-frontend-workflow
