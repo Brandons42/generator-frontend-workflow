@@ -23,42 +23,44 @@ module.exports = class extends Generator {
         abrv: 'Less',
         dep: ['less' + ldr, 'less'],
         ext: 'less',
-        loader: ', \'less' + ldr,
+        ldr: ', \'less' + ldr,
         short: chalk.red('Less') + suf
       },
       'Plain old CSS': {
         abrv: 'CSS',
         dep: [],
         ext: 'css',
-        loader: '',
+        ldr: '',
         short: chalk.red('no')
       },
       'Sass': {
         abrv: 'Sass',
         dep: ['sass' + ldr, 'node-sass'],
         ext: 'sass',
-        loader: ', \'sass' + ldr,
+        ldr: ', \'sass' + ldr,
         short: chalk.red('Sass') + suf
       },
       'SCSS, Sass with more CSS-like syntax': {
         abrv: 'SCSS',
         dep: ['sass' + ldr, 'node-sass'],
         ext: 'scss',
-        loader: ', \'sass' + ldr,
+        ldr: ', \'sass' + ldr,
         short: chalk.red('SCSS') + suf
       },
       'Stylus': {
         abrv: 'Stylus',
         dep: ['stylus' + ldr, 'stylus'],
         ext: 'styl',
-        loader: ', \'stylus' + ldr,
+        ldr: ', \'stylus' + ldr,
         short: chalk.red('Stylus') + suf
       },
       //JS versions/alternatives
       'CoffeeScript': {
         abrv: 'CoffeeScript',
         babel: false,
+        dep: ['coffee-loader'],
         ext: 'coffee',
+        ldr: 'coffee' + ldr,
         short: chalk.red('CoffeeScript') + alt
       },
       'ECMAScript 5 (ES5), what you probably know as vanilla JS': {
@@ -66,14 +68,15 @@ module.exports = class extends Generator {
         babel: false,
         dep: [],
         ext: 'js',
-        loader: '',
+        ldr: '',
         short: chalk.red('vanilla Javascript')
       },
       'ECMAScript 6 (ES6)/ ECMAScript 2015 (ES2015)': {
         abrv: 'ES2015',
-        babel: false,
+        babel: bp + 'es2015',
         dep: [bc, bl, bp + 'es2015'],
         ext: 'js',
+        ldr: bl,
         short: chalk.red('ES2015') + v
       },
       'ECMAScript 2016 (ES2016)': {
@@ -81,6 +84,7 @@ module.exports = class extends Generator {
         babel: bp + 'es2016',
         dep: [bc, bl, bp + 'es2016'],
         ext: 'js',
+        ldr: bl,
         short: chalk.red('ES2016') + v
       },
       'ECMAScript 2017 (ES2017)': {
@@ -88,6 +92,7 @@ module.exports = class extends Generator {
         babel: bp + 'es2017',
         dep: [bc, bl, bp + 'es2017'],
         ext: 'js',
+        ldr: bl,
         short: chalk.red('ES2017') + v
       },
       'Elm': {
@@ -95,6 +100,7 @@ module.exports = class extends Generator {
         babel: false,
         dep: ['elm-webpack-loader'],
         ext: 'elm',
+        ldr: 'elm-webpack' + ldr,
         short: chalk.red('Elm') + alt
       },
       'LiveScript': {
@@ -102,6 +108,7 @@ module.exports = class extends Generator {
         babel: false,
         dep: ['livescript-loader'],
         ext: 'ls',
+        ldr: 'livescript' + ldr,
         short: chalk.red('LiveScript') + alt
       },
       'oj': {
@@ -109,6 +116,7 @@ module.exports = class extends Generator {
         babel: false,
         dep: ['oj-loader'],
         ext: 'oj',
+        ldr: 'oj' + ldr,
         short: chalk.red('oj') + alt
       },
       'PureScript': {
@@ -116,12 +124,15 @@ module.exports = class extends Generator {
         babel: false,
         dep: ['purs-loader'],
         ext: 'purs',
+        ldr: 'purs' + ldr,
         short: chalk.red('PureScript') + alt
       },
       'TypeScript': {
         abrv: 'TypeScript',
         babel: false,
+        dep: ['awesome-typescript-loader'],
         ext: 'ts',
+        ldr: 'awesome-typescript' + ldr,
         short: chalk.red('TypeScript') + alt
       }
     };
@@ -484,9 +495,9 @@ module.exports = class extends Generator {
         this.destinationPath('webpack.common.js'), {
           entry: entry.replace(/ /g, ''),
           ppExt: this.map[pp].ext,
-          ppLdr: this.map[pp].loader,
+          ppLdr: this.map[pp].ldr,
           scriptExt: script.ext,
-          scriptLdr: script.loader
+          scriptLdr: script.ldr
         }
       );
       if (!!script.babel) {
@@ -497,19 +508,13 @@ module.exports = class extends Generator {
           }
         );
       }
-      else if (name == 'TypeScript') {
-
-      }
-      else if (name == 'CoffeeScript') {
-
-      }
     }
 
   }
 
   install() {
 
-    const d = ['webpack', 'gulp'].concat(
+    const d = ['webpack', 'webpack-merge', 'gulp'].concat(
       this.map[this.config.get('pp')].dep,
       this.map[this.config.get('script')].dep
     );
