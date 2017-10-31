@@ -11,39 +11,45 @@ module.exports = class extends Generator {
     super(args, opts);
 
     const alt = ' as an alternative to Javascript';
-    const ldr = '-loader\'';
+    const bc = 'babel-core';
+    const bl = 'babel-loader';
+    const bp = 'babel-preset-';
+    const ldr = '-loader';
     const suf = ' as my';
     const v = ' as a version of Javascript';
     this.map = {
       //Pre-processors
       'Less': {
         abrv: 'Less',
-        dep: ['less' + ldr],
+        dep: ['less' + ldr, 'less'],
         ext: 'less',
         loader: ', \'less' + ldr,
         short: chalk.red('Less') + suf
       },
       'Plain old CSS': {
         abrv: 'CSS',
-        //dep:
+        dep: [],
         ext: 'css',
         loader: '',
         short: chalk.red('no')
       },
       'Sass': {
         abrv: 'Sass',
+        dep: ['sass' + ldr, 'node-sass'],
         ext: 'sass',
         loader: ', \'sass' + ldr,
         short: chalk.red('Sass') + suf
       },
       'SCSS, Sass with more CSS-like syntax': {
         abrv: 'SCSS',
+        dep: ['sass' + ldr, 'node-sass'],
         ext: 'scss',
         loader: ', \'sass' + ldr,
         short: chalk.red('SCSS') + suf
       },
       'Stylus': {
         abrv: 'Stylus',
+        dep: ['stylus' + ldr, 'stylus'],
         ext: 'styl',
         loader: ', \'stylus' + ldr,
         short: chalk.red('Stylus') + suf
@@ -51,52 +57,70 @@ module.exports = class extends Generator {
       //JS versions/alternatives
       'CoffeeScript': {
         abrv: 'CoffeeScript',
+        babel: false,
         ext: 'coffee',
         short: chalk.red('CoffeeScript') + alt
       },
       'ECMAScript 5 (ES5), what you probably know as vanilla JS': {
         abrv: 'Vanilla Javascript',
+        babel: false,
+        dep: [],
         ext: 'js',
         loader: '',
         short: chalk.red('vanilla Javascript')
       },
       'ECMAScript 6 (ES6)/ ECMAScript 2015 (ES2015)': {
         abrv: 'ES2015',
+        babel: false,
+        dep: [bc, bl, bp + 'es2015'],
         ext: 'js',
         short: chalk.red('ES2015') + v
       },
       'ECMAScript 2016 (ES2016)': {
         abrv: 'ES2016',
+        babel: bp + 'es2016',
+        dep: [bc, bl, bp + 'es2016'],
         ext: 'js',
         short: chalk.red('ES2016') + v
       },
       'ECMAScript 2017 (ES2017)': {
         abrv: 'ES2017',
+        babel: bp + 'es2017',
+        dep: [bc, bl, bp + 'es2017'],
         ext: 'js',
         short: chalk.red('ES2017') + v
       },
       'Elm': {
         abrv: 'Elm',
+        babel: false,
+        dep: ['elm-webpack-loader'],
         ext: 'elm',
         short: chalk.red('Elm') + alt
       },
       'LiveScript': {
         abrv: 'LiveScript',
+        babel: false,
+        dep: ['livescript-loader'],
         ext: 'ls',
         short: chalk.red('LiveScript') + alt
       },
       'oj': {
         abrv: 'oj',
+        babel: false,
+        dep: ['oj-loader'],
         ext: 'oj',
         short: chalk.red('oj') + alt
       },
       'PureScript': {
         abrv: 'PureScript',
+        babel: false,
+        dep: ['purs-loader'],
         ext: 'purs',
         short: chalk.red('PureScript') + alt
       },
       'TypeScript': {
         abrv: 'TypeScript',
+        babel: false,
         ext: 'ts',
         short: chalk.red('TypeScript') + alt
       }
@@ -104,20 +128,17 @@ module.exports = class extends Generator {
 
     this.config.defaults({
       'dep': 'Yarn',
-      'data': 'JSON',
       'entry': 'scripts/index.js',
       'pp': 'Sass',
       'pst': false,
       'psts': {
         'mainstream': {
           dep: 'Yarn',
-          data: 'JSON',
           pp: 'Sass',
           script: 'ECMAScript 6 (ES6)/ ECMAScript 2015 (ES2015)'
         },
         'simple': {
           dep: 'NPM',
-          data: 'JSON',
           pp: 'Plain old CSS',
           script: 'ECMAScript 5 (ES5), what you probably know as vanilla JS'
         }
@@ -128,32 +149,13 @@ module.exports = class extends Generator {
     this.done = false;
     this.skip = false;
 
-    this.promptingData = function() {
-
-      return this.prompt({
-        choices: [
-          new Separator(),
-          'JSON',
-          'YAML'
-        ],
-        default: this.config.get('data'),
-        message: 'When there\'s a choice, which data-exchange format do you prefer?',
-        name: 'data',
-        type: 'list'
-      }).then(props => {
-        this.config.set({'data': props.data});
-        this.promptingOpts();
-      });
-
-    };
-
     this.promptingDel = function() {
 
       const p = this.config.get('psts');
       const prsts = Object.keys(p);
       prsts.sort();
       for (let q = 0; q < prsts.length; q++) {
-        prsts[q] += `: ${p[prsts[q]].data}, ${p[prsts[q]].dep}, ${this.map[p[prsts[q]].pp].abrv}, ${this.map[p[prsts[q]].script].abrv}`;
+        prsts[q] += `: ${p[prsts[q]].dep}, ${this.map[p[prsts[q]].pp].abrv}, ${this.map[p[prsts[q]].script].abrv}`;
       }
       prsts.unshift(new Separator());
       return this.prompt({
@@ -200,7 +202,6 @@ module.exports = class extends Generator {
           'I\'m ready to generate!',
           new Separator(),
           str + chalk.red(this.config.get('dep')) + ' for dependency management',
-          str + chalk.red(this.config.get('data')) + ' as my preferred data-exchange format',
           str + this.map[this.config.get('pp')].short + ' pre-processor',
           str + this.map[this.config.get('script')].short
         ],
@@ -211,9 +212,6 @@ module.exports = class extends Generator {
       }).then(props => {
         if (props.settings.endsWith('management')) {
           this.promptingDeps();
-        }
-        else if (props.settings.endsWith('format')) {
-          this.promptingData();
         }
         else if (props.settings.endsWith('pre-processor')) {
           this.promptingPps();
@@ -239,7 +237,6 @@ module.exports = class extends Generator {
         if (props.ow) {
           psts[name] = {
             dep: this.config.get('dep'),
-            data: this.config.get('data'),
             pp: this.config.get('pp'),
             script: this.config.get('script')
           };
@@ -289,7 +286,11 @@ module.exports = class extends Generator {
           let stop = false;
           const presets = this.config.get('psts');
           for (let key in presets) {
-            if (presets[key].dep == this.config.get('dep') && presets[key].data == this.config.get('data') && presets[key].pp == this.config.get('pp') && presets[key].script == this.config.get('script')) {
+            if (
+              presets[key].dep == this.config.get('dep') &&
+              presets[key].pp == this.config.get('pp') &&
+              presets[key].script == this.config.get('script')
+            ) {
               stop = key;
               break;
             }
@@ -338,7 +339,6 @@ module.exports = class extends Generator {
         else {
           psts[props.psts] = {
             dep: this.config.get('dep'),
-            data: this.config.get('data'),
             pp: this.config.get('pp'),
             script: this.config.get('script')
           };
@@ -418,7 +418,7 @@ module.exports = class extends Generator {
     const choices = Object.keys(ps);
     choices.sort();
     for (let q = 0; q < choices.length; q++) {
-      choices[q] += `: ${ps[choices[q]].data}, ${ps[choices[q]].dep}, ${this.map[ps[choices[q]].pp].abrv}, ${this.map[ps[choices[q]].script].abrv}`;
+      choices[q] += `: ${ps[choices[q]].dep}, ${this.map[ps[choices[q]].pp].abrv}, ${this.map[ps[choices[q]].script].abrv}`;
     }
     choices.unshift(new Separator(), no, del, new Separator());
     return this.prompt([
@@ -452,7 +452,6 @@ module.exports = class extends Generator {
         const selected = this.config.get('psts')[props.preset.slice(0, index)];
         this.config.set({
           'dep': selected.dep,
-          'data': selected.json,
           'pp': selected.pp,
           'script': selected.script
         });
@@ -467,22 +466,41 @@ module.exports = class extends Generator {
 
     if (!this.skip) {
       const pp = this.config.get('pp');
+      const script = this.map[this.config.get('script')];
       this.fs.copyTpl(
-        this.templatePath('webpack.config.js'),
-        this.destinationPath('webpack.config.js'), {
+        this.templatePath('webpack.common.js'),
+        this.destinationPath('webpack.common.js'), {
           entry: this.config.get('entry').replace(/ /g, ''),
           ppExt: this.map[pp].ext,
           ppLoader: this.map[pp].loader,
-          scriptExt: this.map[this.config.get('script')].ext
+          scriptExt: script.ext
         }
       );
+      if (!!script.babel) {
+        this.fs.copyTpl(
+          this.templatePath('babelrc'),
+          this.destinationPath('.babelrc'), {
+            preset: script.babel
+          }
+        );
+      }
     }
 
   }
 
   install() {
 
-    //this.installDependencies();
+    const d = ['webpack', 'gulp'].concat(
+      this.map[this.config.get('pp')].dep,
+      this.map[this.config.get('script')].dep
+    );
+
+    if (this.config.get('dep') == 'Yarn') {
+      this.yarnInstall(d, { 'dev': true });
+    }
+    else {
+      this.npmInstall(d, { 'save-dev': true });
+    }
 
   }
 
