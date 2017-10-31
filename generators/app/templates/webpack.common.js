@@ -23,12 +23,12 @@ module.exports = {
       {
         test: /\.<%= ppExt %>$/,
         exclude: /^node_modules$/,
-        loaders: ['style-loader', 'css-loader'<%- ppLoader %>]
+        loaders: ['style-loader', 'css-loader'<%- ppLdr + '\'' %>]
       },
       {
-        test: /\.js$/,
+        test: /\.<%= scriptExt %>$/,
         exclude: /^node_modules$/,
-        loader: 'babel-loader'
+        loader: <%- '\'' + scriptLdr + '\'' %>
       },
       {
         test: /\.(png|svg|jpg|gif)$/,

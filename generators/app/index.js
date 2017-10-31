@@ -462,18 +462,31 @@ module.exports = class extends Generator {
 
   }
 
+  configuring() {
+
+    this.composeWith(require.resolve('generator-starter-files/generators/app'));
+
+  }
+
   writing() {
 
     if (!this.skip) {
+      const entry = this.config.get('entry');
+      this.composeWith(require.resolve('generator-init-enhanced/generators/app'), {
+        main: entry,
+        prompt: 'xmain'
+      });
       const pp = this.config.get('pp');
-      const script = this.map[this.config.get('script')];
+      const name = this.config.get('script');
+      const script = this.map[name];
       this.fs.copyTpl(
         this.templatePath('webpack.common.js'),
         this.destinationPath('webpack.common.js'), {
-          entry: this.config.get('entry').replace(/ /g, ''),
+          entry: entry.replace(/ /g, ''),
           ppExt: this.map[pp].ext,
-          ppLoader: this.map[pp].loader,
-          scriptExt: script.ext
+          ppLdr: this.map[pp].loader,
+          scriptExt: script.ext,
+          scriptLdr: script.loader
         }
       );
       if (!!script.babel) {
@@ -483,6 +496,12 @@ module.exports = class extends Generator {
             preset: script.babel
           }
         );
+      }
+      else if (name == 'TypeScript') {
+
+      }
+      else if (name == 'CoffeeScript') {
+
       }
     }
 
